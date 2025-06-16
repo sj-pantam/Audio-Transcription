@@ -106,11 +106,11 @@ st.markdown("""
 st.title("🎙 Meeting Notes Generator")
 st.markdown("""
     Upload your meeting audio file and get an AI-generated summary, action items, and full transcript.
-    Supports MP3 files up to 50MB.
+    Supports various audio formats (MP3, WAV, M4A, MP4) up to 50MB.
 """)
 
 # File uploader
-audio_file = st.file_uploader("Upload audio file (mp3)", type=['mp3'])
+audio_file = st.file_uploader("Upload audio file", type=['mp3', 'wav', 'm4a', 'mp4'])
 
 if audio_file:
     process_audio(audio_file)

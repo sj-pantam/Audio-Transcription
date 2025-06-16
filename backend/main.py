@@ -24,6 +24,17 @@ model = whisper.load_model("base")
 # Maximum file size (50MB)
 MAX_FILE_SIZE = 50 * 1024 * 1024
 
+# Supported audio formats
+SUPPORTED_FORMATS = {
+    'audio/mp3': '.mp3',
+    'audio/mpeg': '.mp3',
+    'audio/wav': '.wav',
+    'audio/x-wav': '.wav',
+    'audio/mp4': '.m4a',
+    'audio/x-m4a': '.m4a',
+    'video/mp4': '.mp4'
+}
+
 def call_ollama(prompt: str) -> str:
     response = ollama.generate(
         model="llama3.2",
@@ -57,20 +68,28 @@ async def process_audio_chunk(chunk_path: str) -> dict:
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
     try:
-        # Save uploaded file
-        file_location = f"temp_{file.filename}"
+        # Validate file type
+        if file.content_type not in SUPPORTED_FORMATS:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Unsupported file type. Supported types are: {', '.join(SUPPORTED_FORMATS.keys())}"
+            )
+
+        # Save uploaded file with appropriate extension
+        file_extension = SUPPORTED_FORMATS[file.content_type]
+        file_location = f"temp_{file.filename}{file_extension}"
+        
         with open(file_location, "wb+") as file_object:
             file_object.write(await file.read())
             
         # Transcribe with increased timeout
-        model = whisper.load_model("base")
         result = model.transcribe(file_location, fp16=False, language="en")
         
         # Clean up
         os.remove(file_location)
         
         # Generate summary using Ollama
-        summary = generate_summary(result["text"])
+        summary = await process_audio_chunk(file_location)
         
         return {
             "transcript": result["text"],
