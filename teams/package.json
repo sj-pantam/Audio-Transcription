@@ -1,0 +1,21 @@
+{
+  "name": "meeting-notes-generator",
+  "version": "1.0.0",
+  "description": "Meeting Notes Generator Teams App",
+  "scripts": {
+    "dev": "teamsfx start",
+    "build": "teamsfx build",
+    "package": "teamsfx package",
+    "deploy": "teamsfx deploy",
+    "validate": "teamsfx validate"
+  },
+  "dependencies": {
+    "@microsoft/teamsfx": "^2.0.0",
+    "@microsoft/teams-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "@microsoft/teamsfx-cli": "^2.0.0",
+    "@types/node": "^16.0.0",
+    "typescript": "^4.0.0"
+  }
+} 
