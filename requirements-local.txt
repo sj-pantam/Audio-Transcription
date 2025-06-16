@@ -6,5 +6,6 @@ python-multipart==0.0.9
 requests==2.31.0
 python-dotenv==1.0.1
 
-# Note: For local development, you'll need to install:
-# pip install openai-whisper==20231117 ollama==0.1.6 
+# Local development dependencies
+openai-whisper==20231117
+ollama==0.1.6 

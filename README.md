@@ -1,66 +1,61 @@
-# AI Meeting Notes Generator
+# Audio Transcription App
 
 A Python application that uses AI to transcribe meeting audio and generate summaries.
 
 ## Code Structure
 
-### Backend (`backend/main.py`)
-- FastAPI server handling audio file uploads
-- Whisper model for audio transcription
-- LLaMA3.2 (via Ollama) for generating summaries and action items
-- Endpoints:
-  - `/transcribe`: Accepts MP3 files and returns transcript, summary, and action items
+### Backend (FastAPI)
+- `main.py`: FastAPI server with endpoints:
+  - `/transcribe`: Upload and process audio files
   - `/health`: Health check endpoint
 
-### Frontend (`frontend/app.py`)
-- Streamlit interface for file upload and results display
-- Features:
-  - Audio file upload (MP3)
+### Frontend (Streamlit)
+- `app.py`: Streamlit interface for:
+  - File upload
   - Progress tracking
-  - Summary and action items display
-  - Full transcript view
-  - Error handling
+  - Results display
 
 ## Dependencies
-```
-fastapi==0.110.0
-uvicorn==0.27.1
-python-multipart==0.0.9
-openai-whisper==20231117
-ollama==0.1.6
-requests==2.31.0
-python-dotenv==1.0.1
-streamlit==1.32.0
-```
+
+### Core Dependencies
+- streamlit==1.32.0
+- fastapi==0.110.0
+- uvicorn==0.27.1
+- python-multipart==0.0.9
+- requests==2.31.0
+- python-dotenv==1.0.1
+
+### Local Development Dependencies
+- openai-whisper==20231117
+- ollama==0.1.6
 
 ## Setup
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
 
-2. Install LLaMA3.2:
-```bash
-ollama pull llama3.2
-```
-
-3. Run backend:
-```bash
-cd backend
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-4. Run frontend:
-```bash
-cd frontend
-streamlit run app.py
-```
+1. Clone the repository
+2. Install dependencies:
+   - For local development: `pip install -r requirements-local.txt`
+   - For deployment: `pip install -r requirements.txt`
 
 ## Environment Variables
-Create `.env` file:
+
+Create a `.env` file:
 ```
 BACKEND_URL=http://localhost:8000
 ```
 
+## Local Development
+
+1. Start the backend:
+```bash
+cd backend
+uvicorn main:app --reload
+```
+
+2. Start the frontend:
+```bash
+streamlit run frontend/app.py
+```
+
 ## License
-MIT
+
+MIT License
