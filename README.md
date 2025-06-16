@@ -1,4 +1,4 @@
-# Meeting Notes Generator
+# AI Meeting Notes Generator
 
 An AI-powered application that transcribes audio from meetings and generates summaries and action items.
 
@@ -8,6 +8,12 @@ An AI-powered application that transcribes audio from meetings and generates sum
 - Action items extraction
 - Progress tracking
 - Support for files up to 50MB
+
+## Technology Stack
+- **Whisper** for transcription (locally, not via Ollama)
+- **LLaMA3.2** via **Ollama** for summarization and task extraction
+- **FastAPI** for the backend
+- **Streamlit** for the frontend
 
 ## Deployment Options
 
@@ -33,13 +39,18 @@ An AI-powered application that transcribes audio from meetings and generates sum
 pip install -r requirements.txt
 ```
 
-2. Start the backend:
+2. Pull LLaMA3.2:
+```bash
+ollama pull llama3.2
+```
+
+3. Start the backend:
 ```bash
 cd backend
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-3. Start the frontend:
+4. Start the frontend:
 ```bash
 cd frontend
 streamlit run app.py
@@ -52,4 +63,4 @@ BACKEND_URL=your_backend_url
 ```
 
 ## License
-MIT 
+MIT
