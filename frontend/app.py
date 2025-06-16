@@ -10,36 +10,7 @@ load_dotenv()
 # Get backend URL from environment variable or use default
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
-# Page config
-st.set_page_config(
-    page_title="Meeting Notes Generator",
-    page_icon="🎙",
-    layout="wide"
-)
-
-# Custom CSS
-st.markdown("""
-    <style>
-    .stButton>button {
-        width: 100%;
-    }
-    .main {
-        padding: 2rem;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# Title and description
-st.title("🎙 Meeting Notes Generator")
-st.markdown("""
-    Upload your meeting audio file and get an AI-generated summary, action items, and full transcript.
-    Supports MP3 files up to 50MB.
-""")
-
-# File uploader
-audio_file = st.file_uploader("Upload audio file (mp3)", type=['mp3'])
-
-if audio_file:
+def process_audio(audio_file):
     # Show file size
     file_size = audio_file.size / (1024 * 1024)  # Convert to MB
     st.write(f"File size: {file_size:.2f}MB")
@@ -111,6 +82,38 @@ if audio_file:
         finally:
             progress_bar.empty()
             status_text.empty()
+
+# Page config
+st.set_page_config(
+    page_title="Meeting Notes Generator",
+    page_icon="🎙",
+    layout="wide"
+)
+
+# Custom CSS
+st.markdown("""
+    <style>
+    .stButton>button {
+        width: 100%;
+    }
+    .main {
+        padding: 2rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Title and description
+st.title("🎙 Meeting Notes Generator")
+st.markdown("""
+    Upload your meeting audio file and get an AI-generated summary, action items, and full transcript.
+    Supports MP3 files up to 50MB.
+""")
+
+# File uploader
+audio_file = st.file_uploader("Upload audio file (mp3)", type=['mp3'])
+
+if audio_file:
+    process_audio(audio_file)
 
 # Footer
 st.markdown("---")
