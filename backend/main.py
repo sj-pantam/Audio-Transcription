@@ -32,7 +32,9 @@ SUPPORTED_FORMATS = {
     'audio/x-wav': '.wav',
     'audio/mp4': '.m4a',
     'audio/x-m4a': '.m4a',
-    'video/mp4': '.mp4'
+    'video/mp4': '.mp4',
+    'audio/aac': '.m4a',  # Added for M4A files
+    'audio/x-aac': '.m4a'  # Added for M4A files
 }
 
 def call_ollama(prompt: str) -> str:
@@ -67,16 +69,32 @@ async def process_audio_chunk(chunk_path: str) -> dict:
 
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
+    file_location = None
     try:
-        # Validate file type
-        if file.content_type not in SUPPORTED_FORMATS:
+        # Get file extension from filename
+        file_ext = os.path.splitext(file.filename)[1].lower()
+        
+        # Map common extensions to MIME types
+        ext_to_mime = {
+            '.mp3': 'audio/mpeg',
+            '.wav': 'audio/wav',
+            '.m4a': 'audio/x-m4a',
+            '.mp4': 'video/mp4'
+        }
+        
+        # Determine the correct MIME type
+        mime_type = file.content_type
+        if mime_type not in SUPPORTED_FORMATS and file_ext in ext_to_mime:
+            mime_type = ext_to_mime[file_ext]
+            
+        if mime_type not in SUPPORTED_FORMATS:
             raise HTTPException(
                 status_code=400,
                 detail=f"Unsupported file type. Supported types are: {', '.join(SUPPORTED_FORMATS.keys())}"
             )
 
         # Save uploaded file with appropriate extension
-        file_extension = SUPPORTED_FORMATS[file.content_type]
+        file_extension = SUPPORTED_FORMATS[mime_type]
         file_location = f"temp_{file.filename}{file_extension}"
         
         with open(file_location, "wb+") as file_object:
@@ -84,9 +102,6 @@ async def transcribe_audio(file: UploadFile = File(...)):
             
         # Transcribe with increased timeout
         result = model.transcribe(file_location, fp16=False, language="en")
-        
-        # Clean up
-        os.remove(file_location)
         
         # Generate summary using Ollama
         summary = await process_audio_chunk(file_location)
@@ -97,7 +112,7 @@ async def transcribe_audio(file: UploadFile = File(...)):
             "actions": summary["actions"]
         }
     except Exception as e:
-        if os.path.exists(file_location):
+        if file_location and os.path.exists(file_location):
             os.remove(file_location)
         raise HTTPException(status_code=500, detail=str(e))
 
