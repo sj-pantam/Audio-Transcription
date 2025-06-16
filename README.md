@@ -15,24 +15,6 @@ An AI-powered application that transcribes audio from meetings and generates sum
 - **FastAPI** for the backend
 - **Streamlit** for the frontend
 
-## Deployment Options
-
-### Option 1: Web Deployment
-1. Frontend (Streamlit):
-   - Sign up for [Streamlit Cloud](https://streamlit.io/cloud)
-   - Connect your GitHub repository
-   - Deploy the frontend app
-
-2. Backend (FastAPI):
-   - Deploy to a cloud provider (e.g., Heroku, DigitalOcean, AWS)
-   - Set up environment variables
-   - Update the frontend API URL
-
-### Option 2: Microsoft Teams App
-1. Create a Teams app manifest
-2. Package the application
-3. Deploy to Teams
-
 ## Local Development
 1. Install dependencies:
 ```bash
