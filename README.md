@@ -1,4 +1,4 @@
-# AI Meeting Notes Generator (Whisper + LLaMA2)
+# AI Meeting Notes Generator (Whisper + LLaMA3.2)
 This app lets you upload a recorded meeting and returns:
 - A short summary
 - Action items
@@ -11,6 +11,6 @@ It uses:
 
 ## How to Run
 1. Install requirements: `pip install -r requirements.txt`
-2. Pull LLaMA2: `ollama pull llama2`
+2. Pull LLaMA3.2: `ollama pull llama3.2`
 3. Run backend: `uvicorn backend.main:app --reload`
 4. Run frontend: `streamlit run frontend/app.py`
