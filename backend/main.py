@@ -55,36 +55,32 @@ async def process_audio_chunk(chunk_path: str) -> dict:
         raise HTTPException(status_code=500, detail=f"Error processing audio: {str(e)}")
 
 @app.post("/transcribe")
-async def process_audio(file: UploadFile = File(...)):
+async def transcribe_audio(file: UploadFile = File(...)):
     try:
-        # Check file size
-        file_size = 0
-        chunk_size = 1024 * 1024  # 1MB chunks
+        # Save uploaded file
+        file_location = f"temp_{file.filename}"
+        with open(file_location, "wb+") as file_object:
+            file_object.write(await file.read())
+            
+        # Transcribe with increased timeout
+        model = whisper.load_model("base")
+        result = model.transcribe(file_location, fp16=False, language="en")
         
-        with tmp.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
-            while chunk := await file.read(chunk_size):
-                if file_size + len(chunk) > MAX_FILE_SIZE:
-                    raise HTTPException(
-                        status_code=413,
-                        detail=f"File too large. Maximum size is {MAX_FILE_SIZE/1024/1024}MB"
-                    )
-                temp_file.write(chunk)
-                file_size += len(chunk)
-            tmp_path = temp_file.name
-
-        try:
-            result = await process_audio_chunk(tmp_path)
-            return result
-        finally:
-            # Clean up temporary file
-            if os.path.exists(tmp_path):
-                os.unlink(tmp_path)
-
-    except HTTPException as he:
-        raise he
+        # Clean up
+        os.remove(file_location)
+        
+        # Generate summary using Ollama
+        summary = generate_summary(result["text"])
+        
+        return {
+            "transcript": result["text"],
+            "summary": summary["summary"],
+            "actions": summary["actions"]
+        }
     except Exception as e:
-        print("Error occurred:", e)
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        if os.path.exists(file_location):
+            os.remove(file_location)
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Health check endpoint
 @app.get("/health")

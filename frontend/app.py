@@ -33,11 +33,11 @@ def process_audio(audio_file):
                 f"{BACKEND_URL}/transcribe",
                 files={"file": audio_file},
                 stream=True,
-                timeout=300  # 5-minute timeout
+                timeout=1800  # 30-minute timeout for long files
             )
             
             progress_bar.progress(40)
-            status_text.text("Transcribing audio...")
+            status_text.text("Transcribing audio (this may take several minutes for long files)...")
             
             # Handle errors
             if response.status_code == 413:
